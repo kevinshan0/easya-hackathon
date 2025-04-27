@@ -10,9 +10,9 @@
 
 ## 🖼️ Screenshots
 
-| Asset Selection                                 | Results Page                        | AI Strategy Page                           |
-| ----------------------------------------------- | ----------------------------------- | ------------------------------------------ |
-| ![Asset Selection](https://imgur.com/a/JhyxU1B) | ![Results](screenshots/results.png) | ![AI Results](https://imgur.com/a/onuM26I) |
+| Asset Selection                                | Results Page                       | AI Strategy Page                          |
+| ---------------------------------------------- | ---------------------------------- | ----------------------------------------- |
+| [Asset Selection](https://imgur.com/a/JhyxU1B) | [Results](screenshots/results.png) | [AI Results](https://imgur.com/a/onuM26I) |
 
 ---
 
@@ -92,4 +92,3 @@ npm run dev:all
 For questions or support, open an issue or contact [YOUR_EMAIL_HERE].
 
 ---
-
