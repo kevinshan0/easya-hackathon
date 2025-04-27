@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useWallet } from "@/context/WalletContext";
 import { Button } from "@/components/ui/button";
@@ -15,7 +14,7 @@ export function Header() {
             alt="Polkadot Logo"
             className="h-10 w-auto filter brightness-0 invert" // Ensures logo is visible on dark background
           />
-          <h1 className="text-xl font-bold text-white">Yield Compass</h1>
+          <h1 className="text-2xl font-bold text-white">Yield Compass</h1>
         </div>
         
         {walletConnected && walletAddress && (
