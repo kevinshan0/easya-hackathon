@@ -11,7 +11,7 @@ export function Header() {
         <div className="flex items-center gap-3">
           <div className="h-10 flex items-center">
             <img 
-              src="public\lovable-uploads\polkadot.png" 
+              src="\lovable-uploads\polkadot.png" 
               alt="Polkadot Logo" 
               className="h-10 w-auto"
             />
