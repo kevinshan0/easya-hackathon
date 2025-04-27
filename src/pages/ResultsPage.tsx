@@ -100,6 +100,9 @@ export default function ResultsPage() {
 =======
   const { selectedAssets, bestProtocols, aiSuggestion } = useYield();
   const { entries: onChainProtocols, loading } = useYieldEntries();
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
   React.useEffect(() => {
