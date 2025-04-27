@@ -28,13 +28,23 @@
 
 ## 🛠️ How the Smart Contract Works
 
-> **Note:** If your project does not include a custom smart contract, clarify that here.  
-> If you do have a smart contract, describe its purpose, main functions, and how it interacts with the Polkadot Asset Hub.
+This project includes a custom smart contract deployed on the Polkadot Asset Hub (EVM-compatible parachain on Polkadot). The contract is called **YIELDRATES** and is responsible for storing and managing yield rate entries for different chains.
 
-This project does not deploy a custom smart contract. Instead, it aggregates and analyzes DeFi protocol data from the Polkadot ecosystem, leveraging existing protocols and parachains. All user interactions are non-custodial and occur via the user's Polkadot wallet.
+- **Contract Name:** YIELDRATES
+- **Contract Address:** `0xa0c289571683a8C17ACb5F0312d84084c43b30BD`
+- **Network/Chain:** Polkadot Asset Hub (Westend)
+- **Block Explorer Link:** [View the deployed contract on Asset Hub](https://assethub-westend.subscan.io/account/0xa0c289571683a8C17ACb5F0312d84084c43b30BD)
 
-**Block Explorer Link:**  
-[View the deployed contract on Asset Hub](YOUR_BLOCK_EXPLORER_LINK_HERE)
+### Main Functions
+
+- `addEntry(bytes32 chain, bytes32 data)`: Add a new yield rate entry for a specific chain.
+- `updateEntry(uint256 index, bytes32 data)`: Update an existing yield rate entry by index.
+- `entries(uint256 index)`: View a specific entry by index.
+- `getEntriesCount()`: Get the total number of entries.
+- `getEntry(uint256 index)`: Retrieve a specific entry's details.
+- `owner()`: Returns the owner of the contract.
+
+The contract interacts with the frontend to allow users to view and update yield rate data in a decentralized and transparent manner.
 
 ---
 
@@ -55,10 +65,10 @@ This project does not deploy a custom smart contract. Instead, it aggregates and
 ## 🧑‍💻 How to Run Locally
 
 ```bash
-git clone https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME.git
-cd YOUR_REPO_NAME
+git clone https://github.com/mrsinani/easya-hackathon.git
+cd easya-hackathon
 npm install
-npm run dev
+npm run dev:all
 # For backend (AI): cd backend && npm install && npm start
 ```
 
@@ -83,4 +93,3 @@ For questions or support, open an issue or contact [YOUR_EMAIL_HERE].
 
 ---
 
-**_Don't forget to replace all placeholder links and add your screenshots and videos!_**
