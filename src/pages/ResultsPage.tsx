@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useWallet } from "@/context/WalletContext";
 import { useYield } from "@/context/YieldContext";
+import { useYieldEntries } from "@/hooks/useYieldContract";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
@@ -39,9 +40,30 @@ const assetMeta: Record<
   },
 };
 
+// Whitelist of Polkadot parachains and ecosystem chains
+const whitelist = [
+  "Acala",
+  "Moonbeam",
+  "Astar",
+  "Parallel Finance",
+  "Centrifuge",
+  "Phala Network",
+  "Interlay",
+  "Bifrost",
+  "Bifrost Network",
+  "HydraDX",
+  "Equilibrium",
+  "Karura",
+  "Moonriver",
+  "Kusama",
+  "Polkadot",
+  "Manta",
+];
+
 export default function ResultsPage() {
   const navigate = useNavigate();
   const { walletConnected } = useWallet();
+<<<<<<< Updated upstream
   const { selectedAssets, bestProtocols } = useYield();
   const [aiModalOpen, setAiModalOpen] = React.useState(false);
   const [aiLoading, setAiLoading] = React.useState(false);
@@ -75,6 +97,10 @@ export default function ResultsPage() {
     fetchAI();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [aiModalOpen]);
+=======
+  const { selectedAssets, bestProtocols, aiSuggestion } = useYield();
+  const { entries: onChainProtocols, loading } = useYieldEntries();
+>>>>>>> Stashed changes
 
   React.useEffect(() => {
     if (!walletConnected) {
@@ -84,11 +110,23 @@ export default function ResultsPage() {
     }
   }, [walletConnected, selectedAssets, navigate]);
 
+  // Filter protocols by whitelist and selected assets
+  const filteredProtocols = onChainProtocols.filter(
+    (protocol) =>
+      whitelist.includes(protocol.chain) &&
+      selectedAssets.includes(protocol.chain)
+  );
+
+  // Sort by APY descending
+  const sortedProtocols = [...filteredProtocols].sort(
+    (a, b) => (b.apy || 0) - (a.apy || 0)
+  );
+
   // Gather all bestProtocols into an array and sort by apy descending
-  const protocolResults = selectedAssets
-    .map((asset) => ({ asset, protocol: bestProtocols[asset] }))
-    .filter((item) => item.protocol)
-    .sort((a, b) => (b.protocol!.apy || 0) - (a.protocol!.apy || 0));
+  // const protocolResults = selectedAssets
+  //   .map((asset) => ({ asset, protocol: bestProtocols[asset] }))
+  //   .filter((item) => item.protocol)
+  //   .sort((a, b) => (b.protocol!.apy || 0) - (a.protocol!.apy || 0));
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -107,14 +145,18 @@ export default function ResultsPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-8 mb-8">
-        {protocolResults.map((item, idx) => (
-          <ProtocolCard
-            key={item.asset}
-            asset={item.asset}
-            protocol={item.protocol}
-            best={idx === 0}
-          />
-        ))}
+        {loading ? (
+          <div>Loading on-chain data...</div>
+        ) : (
+          sortedProtocols.map((protocol, idx) => (
+            <ProtocolCard
+              key={protocol.chain + protocol.project + idx}
+              asset={protocol.chain}
+              protocol={protocol}
+              best={idx === 0}
+            />
+          ))
+        )}
       </div>
 
       <Card className="mb-8 border-polkadot-primary/20 bg-polkadot-light/50 shadow-md">
@@ -182,7 +224,7 @@ export default function ResultsPage() {
           }
           className="bg-polkadot-primary hover:bg-polkadot-secondary text-white"
         >
-          Take Action Now
+          Invest
         </Button>
       </div>
     </div>

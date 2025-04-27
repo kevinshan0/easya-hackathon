@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useWallet } from "@/context/WalletContext";
 import { useYield } from "@/context/YieldContext";
+import { useYieldEntries } from "@/hooks/useYieldContract";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -37,6 +38,26 @@ const assetMeta: Record<
   },
 };
 
+// Whitelist of Polkadot parachains and ecosystem chains
+const whitelist = [
+  "Acala",
+  "Moonbeam",
+  "Astar",
+  "Parallel Finance",
+  "Centrifuge",
+  "Phala Network",
+  "Interlay",
+  "Bifrost",
+  "Bifrost Network",
+  "HydraDX",
+  "Equilibrium",
+  "Karura",
+  "Moonriver",
+  "Kusama",
+  "Polkadot",
+  "Manta",
+];
+
 export default function AssetSelectionPage() {
   const navigate = useNavigate();
   const { walletConnected } = useWallet();
@@ -44,9 +65,10 @@ export default function AssetSelectionPage() {
     selectedAssets,
     toggleAssetSelection,
     calculateBestProtocols,
-    assetList,
     isLoading,
   } = useYield();
+  const { entries: onChainProtocols, loading: loadingOnChain } =
+    useYieldEntries();
 
   React.useEffect(() => {
     if (!walletConnected) {
@@ -60,13 +82,17 @@ export default function AssetSelectionPage() {
     navigate("/results");
   };
 
-  if (isLoading) {
+  // Get unique chain names from on-chain data and filter by whitelist
+  const uniqueChains = Array.from(
+    new Set(onChainProtocols.map((entry) => entry.chain))
+  ).filter((chain) => whitelist.includes(chain));
+
+  if (isLoading || loadingOnChain) {
     return <div className="text-center py-12">Loading assets...</div>;
   }
 
   return (
     <div className="max-w-3xl mx-auto">
-
       <Card className="mb-8 shadow-md border-none">
         <CardHeader className="pb-3">
           <CardTitle>Choose Your Assets</CardTitle>
@@ -77,7 +103,7 @@ export default function AssetSelectionPage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {assetList.map((asset) => {
+            {uniqueChains.map((asset) => {
               const meta = assetMeta[asset] || {
                 name: asset,
                 symbol: asset,
@@ -101,7 +127,6 @@ export default function AssetSelectionPage() {
           </div>
         </CardContent>
       </Card>
-
       <div className="flex justify-end">
         <Button
           onClick={handleOptimize}
