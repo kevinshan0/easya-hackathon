@@ -1,19 +1,11 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useWallet } from "@/context/WalletContext";
 import { useYield } from "@/context/YieldContext";
 import { useYieldEntries } from "@/hooks/useYieldContract";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft } from "lucide-react";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { ArrowLeft, Bot } from "lucide-react";
 
 // Fallback asset metadata for known assets
 const assetMeta: Record<
@@ -63,40 +55,8 @@ const whitelist = [
 export default function ResultsPage() {
   const navigate = useNavigate();
   const { walletConnected } = useWallet();
-  const { selectedAssets, bestProtocols, aiSuggestion } = useYield();
+  const { selectedAssets, bestProtocols } = useYield();
   const { entries: onChainProtocols, loading } = useYieldEntries();
-  const [aiModalOpen, setAiModalOpen] = React.useState(false);
-  const [aiLoading, setAiLoading] = React.useState(false);
-  const [aiError, setAiError] = React.useState<string | null>(null);
-  const [aiResult, setAiResult] = React.useState<string | null>(null);
-
-  // Call backend API when modal opens
-  React.useEffect(() => {
-    if (!aiModalOpen) return;
-    setAiResult(null);
-    setAiError(null);
-    setAiLoading(true);
-    const fetchAI = async () => {
-      try {
-        const res = await fetch("http://localhost:4000/api/ai-suggest", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ selectedAssets }),
-        });
-        if (!res.ok) throw new Error("Failed to fetch AI suggestion");
-        const data = await res.json();
-        setAiResult(data.suggestion || "No suggestion returned.");
-      } catch (err: any) {
-        setAiError(err.message || "Unknown error");
-      } finally {
-        setAiLoading(false);
-      }
-    };
-    fetchAI();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [aiModalOpen]);
 
   React.useEffect(() => {
     if (!walletConnected) {
@@ -117,12 +77,6 @@ export default function ResultsPage() {
   const sortedProtocols = [...filteredProtocols].sort(
     (a, b) => (b.apy || 0) - (a.apy || 0)
   );
-
-  // Gather all bestProtocols into an array and sort by apy descending
-  // const protocolResults = selectedAssets
-  //   .map((asset) => ({ asset, protocol: bestProtocols[asset] }))
-  //   .filter((item) => item.protocol)
-  //   .sort((a, b) => (b.protocol!.apy || 0) - (a.protocol!.apy || 0));
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -160,48 +114,19 @@ export default function ResultsPage() {
           <div className="flex items-center text-polkadot-dark">
             <div className="mr-2 p-2 rounded-full bg-polkadot-primary/10 flex items-center justify-center">
               <div className="w-5 h-5 text-polkadot-primary flex items-center justify-center">
-                AI
+                <Bot className="w-4 h-4" />
               </div>
             </div>
             AI Strategy Suggestion
           </div>
-          <Dialog open={aiModalOpen} onOpenChange={setAiModalOpen}>
-            <DialogTrigger asChild>
-              <Button
-                variant="outline"
-                className="ml-auto border-polkadot-primary text-polkadot-primary hover:bg-polkadot-light self-center"
-                style={{ alignSelf: "center" }}
-                onClick={() => setAiModalOpen(true)}
-              >
-                Analyze with AI
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>AI Strategy Analysis</DialogTitle>
-                <DialogDescription>
-                  {aiLoading &&
-                    "Analyzing your results with AI. Please wait..."}
-                  {aiError && <span className="text-red-500">{aiError}</span>}
-                </DialogDescription>
-              </DialogHeader>
-              <div className="flex flex-col items-center justify-center py-8 min-h-[120px]">
-                {aiLoading && (
-                  <>
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-polkadot-primary mb-4"></div>
-                    <p className="text-gray-600">AI is thinking...</p>
-                  </>
-                )}
-                {aiError && <p className="text-red-500">{aiError}</p>}
-                {aiResult && (
-                  <div
-                    className="text-gray-800 whitespace-pre-line text-left w-full"
-                    dangerouslySetInnerHTML={{ __html: aiResult }}
-                  />
-                )}
-              </div>
-            </DialogContent>
-          </Dialog>
+          <Button
+            asChild
+            variant="outline"
+            className="ml-auto border-polkadot-primary text-polkadot-primary hover:bg-polkadot-light self-center"
+            style={{ alignSelf: "center" }}
+          >
+            <Link to="/ai-results">Analyze with AI</Link>
+          </Button>
         </CardHeader>
         <CardContent>
           <p className="text-gray-700">
