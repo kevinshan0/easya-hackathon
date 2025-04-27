@@ -9,11 +9,13 @@ export function Header() {
     <header className="bg-polkadot-dark py-4 px-6 shadow-lg">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <img
-            src="/lovable-uploads/68b99a0e-5794-4028-bbdd-84e279766ddc.png"
-            alt="Polkadot Logo"
-            className="h-10 w-auto filter brightness-0 invert" // Ensures logo is visible on dark background
-          />
+          <div className="h-10 flex items-center">
+            <img 
+              src="public\lovable-uploads\polkadot.png" 
+              alt="Polkadot Logo" 
+              className="h-10 w-auto"
+            />
+          </div>
           <h1 className="text-2xl font-bold text-white">Yield Compass</h1>
         </div>
         
@@ -24,10 +26,10 @@ export function Header() {
               {walletAddress.substring(0, 6)}...{walletAddress.substring(walletAddress.length - 4)}
             </div>
             <Button
-              variant="outline"
+              variant="destructive"
               size="sm"
               onClick={disconnectWallet}
-              className="text-white border-white/20 hover:bg-white/10"
+              className="bg-red-600 hover:bg-red-700 text-white"
             >
               Disconnect
             </Button>
