@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useWallet } from "@/context/WalletContext";
@@ -47,8 +46,8 @@ export default function ResultsPage() {
       <Card className="mb-8 border-polkadot-primary/20 bg-polkadot-light/50 shadow-md">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center text-polkadot-dark">
-            <div className="mr-2 p-2 rounded-full bg-polkadot-primary/10">
-              <div className="w-5 h-5 text-polkadot-primary">AI</div>
+            <div className="mr-2 p-2 rounded-full bg-polkadot-primary/10 flex items-center justify-center">
+              <div className="w-5 h-5 text-polkadot-primary flex items-center justify-center">AI</div>
             </div>
             AI Strategy Suggestion
           </CardTitle>
