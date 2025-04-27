@@ -5,6 +5,14 @@ import { useYield } from "@/context/YieldContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 // Fallback asset metadata for known assets
 const assetMeta: Record<
@@ -34,7 +42,39 @@ const assetMeta: Record<
 export default function ResultsPage() {
   const navigate = useNavigate();
   const { walletConnected } = useWallet();
-  const { selectedAssets, bestProtocols, aiSuggestion } = useYield();
+  const { selectedAssets, bestProtocols } = useYield();
+  const [aiModalOpen, setAiModalOpen] = React.useState(false);
+  const [aiLoading, setAiLoading] = React.useState(false);
+  const [aiError, setAiError] = React.useState<string | null>(null);
+  const [aiResult, setAiResult] = React.useState<string | null>(null);
+
+  // Call backend API when modal opens
+  React.useEffect(() => {
+    if (!aiModalOpen) return;
+    setAiResult(null);
+    setAiError(null);
+    setAiLoading(true);
+    const fetchAI = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/api/ai-suggest", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ selectedAssets }),
+        });
+        if (!res.ok) throw new Error("Failed to fetch AI suggestion");
+        const data = await res.json();
+        setAiResult(data.suggestion || "No suggestion returned.");
+      } catch (err: any) {
+        setAiError(err.message || "Unknown error");
+      } finally {
+        setAiLoading(false);
+      }
+    };
+    fetchAI();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [aiModalOpen]);
 
   React.useEffect(() => {
     if (!walletConnected) {
@@ -78,18 +118,53 @@ export default function ResultsPage() {
       </div>
 
       <Card className="mb-8 border-polkadot-primary/20 bg-polkadot-light/50 shadow-md">
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center text-polkadot-dark">
+        <CardHeader className="pb-2 flex flex-row items-center justify-between">
+          <div className="flex items-center text-polkadot-dark">
             <div className="mr-2 p-2 rounded-full bg-polkadot-primary/10 flex items-center justify-center">
               <div className="w-5 h-5 text-polkadot-primary flex items-center justify-center">
                 AI
               </div>
             </div>
             AI Strategy Suggestion
-          </CardTitle>
+          </div>
+          <Dialog open={aiModalOpen} onOpenChange={setAiModalOpen}>
+            <DialogTrigger asChild>
+              <Button
+                variant="outline"
+                className="ml-auto border-polkadot-primary text-polkadot-primary hover:bg-polkadot-light self-center"
+                style={{ alignSelf: 'center' }}
+                onClick={() => setAiModalOpen(true)}
+              >
+                Analyze with AI
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>AI Strategy Analysis</DialogTitle>
+                <DialogDescription>
+                  {aiLoading && "Analyzing your results with AI. Please wait..."}
+                  {aiError && <span className="text-red-500">{aiError}</span>}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex flex-col items-center justify-center py-8 min-h-[120px]">
+                {aiLoading && (
+                  <>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-polkadot-primary mb-4"></div>
+                    <p className="text-gray-600">AI is thinking...</p>
+                  </>
+                )}
+                {aiError && (
+                  <p className="text-red-500">{aiError}</p>
+                )}
+                {aiResult && (
+                  <div className="text-gray-800 whitespace-pre-line text-left w-full" dangerouslySetInnerHTML={{ __html: aiResult }} />
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-700">{aiSuggestion}</p>
+          <p className="text-gray-700">Get a personalized strategy suggestion by analyzing your results with AI.</p>
         </CardContent>
       </Card>
 
