@@ -26,10 +26,10 @@ export function Header() {
               {walletAddress.substring(0, 6)}...{walletAddress.substring(walletAddress.length - 4)}
             </div>
             <Button
-              variant="outline"
+              variant="destructive"
               size="sm"
               onClick={disconnectWallet}
-              className="text-white border-white/20 hover:bg-white/10"
+              className="bg-red-600 hover:bg-red-700 text-white"
             >
               Disconnect
             </Button>
