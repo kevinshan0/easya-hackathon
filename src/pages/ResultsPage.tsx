@@ -63,8 +63,8 @@ const whitelist = [
 export default function ResultsPage() {
   const navigate = useNavigate();
   const { walletConnected } = useWallet();
-<<<<<<< Updated upstream
-  const { selectedAssets, bestProtocols } = useYield();
+  const { selectedAssets, bestProtocols, aiSuggestion } = useYield();
+  const { entries: onChainProtocols, loading } = useYieldEntries();
   const [aiModalOpen, setAiModalOpen] = React.useState(false);
   const [aiLoading, setAiLoading] = React.useState(false);
   const [aiError, setAiError] = React.useState<string | null>(null);
@@ -97,13 +97,6 @@ export default function ResultsPage() {
     fetchAI();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [aiModalOpen]);
-=======
-  const { selectedAssets, bestProtocols, aiSuggestion } = useYield();
-  const { entries: onChainProtocols, loading } = useYieldEntries();
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
   React.useEffect(() => {
     if (!walletConnected) {
@@ -124,12 +117,6 @@ export default function ResultsPage() {
   const sortedProtocols = [...filteredProtocols].sort(
     (a, b) => (b.apy || 0) - (a.apy || 0)
   );
-
-  // Gather all bestProtocols into an array and sort by apy descending
-  // const protocolResults = selectedAssets
-  //   .map((asset) => ({ asset, protocol: bestProtocols[asset] }))
-  //   .filter((item) => item.protocol)
-  //   .sort((a, b) => (b.protocol!.apy || 0) - (a.protocol!.apy || 0));
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -177,7 +164,7 @@ export default function ResultsPage() {
               <Button
                 variant="outline"
                 className="ml-auto border-polkadot-primary text-polkadot-primary hover:bg-polkadot-light self-center"
-                style={{ alignSelf: 'center' }}
+                style={{ alignSelf: "center" }}
                 onClick={() => setAiModalOpen(true)}
               >
                 Analyze with AI
@@ -187,7 +174,8 @@ export default function ResultsPage() {
               <DialogHeader>
                 <DialogTitle>AI Strategy Analysis</DialogTitle>
                 <DialogDescription>
-                  {aiLoading && "Analyzing your results with AI. Please wait..."}
+                  {aiLoading &&
+                    "Analyzing your results with AI. Please wait..."}
                   {aiError && <span className="text-red-500">{aiError}</span>}
                 </DialogDescription>
               </DialogHeader>
@@ -198,18 +186,22 @@ export default function ResultsPage() {
                     <p className="text-gray-600">AI is thinking...</p>
                   </>
                 )}
-                {aiError && (
-                  <p className="text-red-500">{aiError}</p>
-                )}
+                {aiError && <p className="text-red-500">{aiError}</p>}
                 {aiResult && (
-                  <div className="text-gray-800 whitespace-pre-line text-left w-full" dangerouslySetInnerHTML={{ __html: aiResult }} />
+                  <div
+                    className="text-gray-800 whitespace-pre-line text-left w-full"
+                    dangerouslySetInnerHTML={{ __html: aiResult }}
+                  />
                 )}
               </div>
             </DialogContent>
           </Dialog>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-700">Get a personalized strategy suggestion by analyzing your results with AI.</p>
+          <p className="text-gray-700">
+            Get a personalized strategy suggestion by analyzing your results
+            with AI.
+          </p>
         </CardContent>
       </Card>
 
