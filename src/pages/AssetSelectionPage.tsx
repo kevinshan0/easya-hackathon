@@ -146,18 +146,15 @@ function AssetCard({ asset, isSelected, onToggle }: AssetCardProps) {
     >
       <div className="flex items-center space-x-3 mb-2">
         <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-          <img
-            src={asset.image}
-            alt={asset.symbol}
-            className="w-6 h-6 object-contain"
-          />
+          <span className="text-lg font-bold text-polkadot-primary">
+            {asset.name.charAt(0)}
+          </span>
         </div>
         <div>
           <h3 className="font-medium">{asset.name}</h3>
           <p className="text-sm text-gray-500">{asset.symbol}</p>
         </div>
       </div>
-      <p className="text-sm text-gray-600 mb-3">{asset.description}</p>
       <div
         className={`h-1 w-full rounded-full ${
           isSelected ? "bg-polkadot-primary" : "bg-gray-200"

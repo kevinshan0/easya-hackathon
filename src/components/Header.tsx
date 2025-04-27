@@ -1,10 +1,17 @@
 import React from "react";
 import { useWallet } from "@/context/WalletContext";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export function Header() {
   const { walletConnected, walletAddress, disconnectWallet } = useWallet();
+  const navigate = useNavigate();
+
+  const handleTitleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    disconnectWallet();
+    navigate("/");
+  };
 
   return (
     <header className="bg-polkadot-dark py-4 px-6 shadow-lg">
@@ -18,7 +25,10 @@ export function Header() {
                 className="h-10 w-auto group-hover:opacity-80 transition-opacity"
               />
             </div>
-            <h1 className="text-2xl font-bold text-white group-hover:text-polkadot-primary transition-colors">
+            <h1
+              className="text-2xl font-bold text-white group-hover:text-polkadot-primary transition-colors cursor-pointer"
+              onClick={handleTitleClick}
+            >
               Yield Compass
             </h1>
           </Link>

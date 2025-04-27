@@ -44,6 +44,12 @@ export default function ResultsPage() {
     }
   }, [walletConnected, selectedAssets, navigate]);
 
+  // Gather all bestProtocols into an array and sort by apy descending
+  const protocolResults = selectedAssets
+    .map((asset) => ({ asset, protocol: bestProtocols[asset] }))
+    .filter((item) => item.protocol)
+    .sort((a, b) => (b.protocol!.apy || 0) - (a.protocol!.apy || 0));
+
   return (
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center mb-8">
@@ -61,11 +67,12 @@ export default function ResultsPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-8 mb-8">
-        {selectedAssets.map((asset) => (
+        {protocolResults.map((item, idx) => (
           <ProtocolCard
-            key={asset}
-            asset={asset}
-            protocol={bestProtocols[asset]}
+            key={item.asset}
+            asset={item.asset}
+            protocol={item.protocol}
+            best={idx === 0}
           />
         ))}
       </div>
@@ -118,9 +125,10 @@ interface ProtocolCardProps {
     score?: number;
     rewardTokens?: string[];
   } | null;
+  best?: boolean;
 }
 
-function ProtocolCard({ asset, protocol }: ProtocolCardProps) {
+function ProtocolCard({ asset, protocol, best }: ProtocolCardProps) {
   if (!protocol) return null;
   const meta = assetMeta[asset] || {
     name: asset,
@@ -144,27 +152,27 @@ function ProtocolCard({ asset, protocol }: ProtocolCardProps) {
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <div className="w-10 h-10 rounded-full flex items-center justify-center text-white mr-3 bg-gray-200 overflow-hidden">
-              <img
-                src={meta.image}
-                alt={meta.symbol}
-                className="w-6 h-6 object-contain"
-              />
+              <span className="text-lg font-bold text-polkadot-primary">
+                {meta.name.charAt(0)}
+              </span>
             </div>
             <div>
               <p className="text-sm text-gray-500">{meta.name}</p>
               <h2 className="text-xl font-bold">{protocol.project}</h2>
             </div>
           </div>
-          <div className="bg-polkadot-light px-3 py-1 rounded-full text-polkadot-primary font-medium">
-            Best Choice
-          </div>
+          {best && (
+            <div className="bg-polkadot-light px-3 py-1 rounded-full text-polkadot-primary font-medium">
+              Best Choice
+            </div>
+          )}
         </div>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
           <MetricCard
             label="APY"
-            value={`${protocol.apy}%`}
+            value={`${protocol.apy.toFixed(2)}%`}
             description="Annual yield"
             highlight
           />

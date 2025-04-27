@@ -15,9 +15,28 @@ app.get("/api/protocols", async (req, res) => {
   try {
     const llamaRes = await fetch("https://yields.llama.fi/pools");
     const llamaData = await llamaRes.json();
-    // Filter for only Polkadot, Moonbeam, or Acala pools
+    // Whitelist of Polkadot parachains and ecosystem chains
+    const whitelist = [
+      "Acala",
+      "Moonbeam",
+      "Astar",
+      "Parallel Finance",
+      "Centrifuge",
+      "Phala Network",
+      "Interlay",
+      "Bifrost",
+      "Bifrost Network",
+      "HydraDX",
+      "Equilibrium",
+      "Karura",
+      "Moonriver",
+      "Kusama",
+      "Polkadot",
+      "Manta",
+    ];
+    // Filter for only whitelisted chains
     const filtered = llamaData.data.filter((pool) =>
-      ["Polkadot", "Moonbeam", "Acala"].includes(pool.chain)
+      whitelist.includes(pool.chain)
     );
 
     // Sort by TVL descending
