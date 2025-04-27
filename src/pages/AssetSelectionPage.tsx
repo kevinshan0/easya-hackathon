@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useWallet } from "@/context/WalletContext";
@@ -51,14 +50,6 @@ export default function AssetSelectionPage() {
   return (
     <div className="max-w-3xl mx-auto">
       <div className="flex items-center mb-8">
-        <Button 
-          variant="ghost" 
-          onClick={() => navigate("/")}
-          className="mr-4"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
-        </Button>
         <h1 className="text-2xl font-bold text-polkadot-dark">Select Assets to Optimize</h1>
       </div>
 
