@@ -51,7 +51,7 @@ The contract interacts with the frontend to allow users to view and update yield
 
 [![Watch the repo walkthrough](screenshots/walkthrough-thumbnail.png)](YOUR_WALKTHROUGH_VIDEO_LINK_HERE)
 
-> _Click the image above or [this link](YOUR_WALKTHROUGH_VIDEO_LINK_HERE) to watch the full repo walkthrough and project explanation._
+> _Click the image above or [this link](https://youtu.be/mQCXE43CIow) to watch the full repo walkthrough and project explanation._
 
 - **/src/pages/**: Main React pages (Landing, Asset Selection, Results, AI Results)
 - **/src/context/**: React Contexts for wallet and yield data
