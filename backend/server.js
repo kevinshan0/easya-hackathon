@@ -1,7 +1,7 @@
-const express = require('express');
-const cors = require('cors');
-const protocols = require('./data/protocols');
-const { optimizeProtocols } = require('./data/optimizer');
+const express = require("express");
+const cors = require("cors");
+const fetch = (...args) =>
+  import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
 const app = express();
 const port = process.env.PORT || 4000; // Use port 4000 for backend
@@ -11,26 +11,46 @@ app.use(cors()); // Enable CORS for requests from frontend (e.g., localhost:8080
 app.use(express.json()); // Parse JSON request bodies
 
 // API Routes
-app.get('/api/protocols', (req, res) => {
-  res.json(protocols);
-});
-
-app.post('/api/optimize', (req, res) => {
-  const { selectedAssets } = req.body;
-
-  if (!Array.isArray(selectedAssets) || selectedAssets.length === 0) {
-    return res.status(400).json({ error: 'selectedAssets must be a non-empty array' });
-  }
-
+app.get("/api/protocols", async (req, res) => {
   try {
-    const results = optimizeProtocols(selectedAssets, protocols);
-    res.json(results);
+    const llamaRes = await fetch("https://yields.llama.fi/pools");
+    const llamaData = await llamaRes.json();
+    // Filter for only Polkadot, Moonbeam, or Acala pools
+    const filtered = llamaData.data.filter((pool) =>
+      ["Polkadot", "Moonbeam", "Acala"].includes(pool.chain)
+    );
+
+    // Sort by TVL descending
+    const sorted = [...filtered].sort(
+      (a, b) => (b.tvlUsd || 0) - (a.tvlUsd || 0)
+    );
+    const n = sorted.length;
+    const lowCut = Math.floor(n / 3);
+    const midCut = Math.floor((2 * n) / 3);
+
+    // Assign risk based on TVL quantiles
+    const mapped = sorted.map((pool, idx) => {
+      let risk = "mid";
+      if (idx < lowCut) risk = "low";
+      else if (idx < midCut) risk = "mid";
+      else risk = "high";
+      return {
+        chain: pool.chain,
+        project: pool.project,
+        apy: pool.apy,
+        tvlUsd: pool.tvlUsd,
+        rewardTokens: pool.rewardTokens,
+        risk,
+      };
+    });
+
+    res.json({ data: mapped, count: mapped.length });
   } catch (error) {
-    console.error("Optimization error:", error);
-    res.status(500).json({ error: 'Failed to calculate optimization' });
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch protocol data" });
   }
 });
 
 app.listen(port, () => {
   console.log(`Backend server listening on http://localhost:${port}`);
-}); 
+});
