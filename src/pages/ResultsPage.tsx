@@ -1,10 +1,35 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useWallet } from "@/context/WalletContext";
-import { useYield, AssetType } from "@/context/YieldContext";
+import { useYield } from "@/context/YieldContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
+
+// Fallback asset metadata for known assets
+const assetMeta: Record<
+  string,
+  { name: string; symbol: string; image: string; description: string }
+> = {
+  Polkadot: {
+    name: "Polkadot",
+    symbol: "DOT",
+    image: "https://cryptologos.cc/logos/polkadot-new-dot-logo.png",
+    description: "The native token of the Polkadot network",
+  },
+  Moonbeam: {
+    name: "Moonbeam",
+    symbol: "GLMR",
+    image: "https://cryptologos.cc/logos/moonbeam-glmr-logo.png",
+    description: "Moonbeam is a smart contract platform on Polkadot.",
+  },
+  Acala: {
+    name: "Acala",
+    symbol: "ACA",
+    image: "https://cryptologos.cc/logos/acala-aca-logo.png",
+    description: "Acala is a DeFi platform and liquidity hub of Polkadot.",
+  },
+};
 
 export default function ResultsPage() {
   const navigate = useNavigate();
@@ -22,20 +47,22 @@ export default function ResultsPage() {
   return (
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center mb-8">
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           onClick={() => navigate("/select-assets")}
           className="mr-4"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Selection
         </Button>
-        <h1 className="text-2xl font-bold text-polkadot-dark">Best Yield Opportunities</h1>
+        <h1 className="text-2xl font-bold text-polkadot-dark">
+          Best Yield Opportunities
+        </h1>
       </div>
 
       <div className="grid grid-cols-1 gap-8 mb-8">
         {selectedAssets.map((asset) => (
-          <ProtocolCard 
+          <ProtocolCard
             key={asset}
             asset={asset}
             protocol={bestProtocols[asset]}
@@ -47,7 +74,9 @@ export default function ResultsPage() {
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center text-polkadot-dark">
             <div className="mr-2 p-2 rounded-full bg-polkadot-primary/10 flex items-center justify-center">
-              <div className="w-5 h-5 text-polkadot-primary flex items-center justify-center">AI</div>
+              <div className="w-5 h-5 text-polkadot-primary flex items-center justify-center">
+                AI
+              </div>
             </div>
             AI Strategy Suggestion
           </CardTitle>
@@ -58,15 +87,17 @@ export default function ResultsPage() {
       </Card>
 
       <div className="flex justify-between">
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           onClick={() => navigate("/select-assets")}
           className="border-polkadot-primary text-polkadot-primary hover:bg-polkadot-light"
         >
           Optimize Different Assets
         </Button>
-        <Button 
-          onClick={() => window.open("https://app.acala.network/swap", "_blank")}
+        <Button
+          onClick={() =>
+            window.open("https://app.acala.network/swap", "_blank")
+          }
           className="bg-polkadot-primary hover:bg-polkadot-secondary text-white"
         >
           Take Action Now
@@ -77,50 +108,51 @@ export default function ResultsPage() {
 }
 
 interface ProtocolCardProps {
-  asset: AssetType;
+  asset: string;
   protocol: {
-    name: string;
+    chain: string;
+    project: string;
     apy: number;
-    fee: number;
-    lockup: number;
-    risk: number;
+    tvlUsd: number;
+    risk: string;
     score?: number;
+    rewardTokens?: string[];
   } | null;
 }
 
 function ProtocolCard({ asset, protocol }: ProtocolCardProps) {
   if (!protocol) return null;
-
-  const assetInfo = {
-    "DOT": { name: "Polkadot", color: "bg-polkadot-primary" },
-    "USDC": { name: "USD Coin", color: "bg-blue-500" },
-    "KSM": { name: "Kusama", color: "bg-purple-500" },
+  const meta = assetMeta[asset] || {
+    name: asset,
+    symbol: asset,
+    image:
+      "https://via.placeholder.com/40?text=" + encodeURIComponent(asset[0]),
+    description: "No description available.",
   };
-
-  const info = assetInfo[asset];
-  
-  const riskLevels = [
-    { level: 1, label: "Very Low", color: "bg-green-500" },
-    { level: 2, label: "Low", color: "bg-blue-500" },
-    { level: 3, label: "Medium", color: "bg-yellow-500" },
-    { level: 4, label: "High", color: "bg-orange-500" },
-    { level: 5, label: "Very High", color: "bg-red-500" },
-  ];
-
-  const riskInfo = riskLevels.find(r => r.level === protocol.risk) || riskLevels[2];
+  // Risk color mapping
+  const riskColors: Record<string, string> = {
+    low: "bg-green-500",
+    mid: "bg-yellow-500",
+    high: "bg-red-500",
+  };
+  const riskColor = riskColors[protocol.risk] || "bg-gray-400";
 
   return (
     <Card className="overflow-hidden border-none shadow-lg">
-      <div className={`h-2 w-full ${info.color}`}></div>
+      <div className={`h-2 w-full ${riskColor}`}></div>
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
           <div className="flex items-center">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white mr-3 ${info.color}`}>
-              {asset}
+            <div className="w-10 h-10 rounded-full flex items-center justify-center text-white mr-3 bg-gray-200 overflow-hidden">
+              <img
+                src={meta.image}
+                alt={meta.symbol}
+                className="w-6 h-6 object-contain"
+              />
             </div>
             <div>
-              <p className="text-sm text-gray-500">{info.name}</p>
-              <h2 className="text-xl font-bold">{protocol.name}</h2>
+              <p className="text-sm text-gray-500">{meta.name}</p>
+              <h2 className="text-xl font-bold">{protocol.project}</h2>
             </div>
           </div>
           <div className="bg-polkadot-light px-3 py-1 rounded-full text-polkadot-primary font-medium">
@@ -130,38 +162,57 @@ function ProtocolCard({ asset, protocol }: ProtocolCardProps) {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-          <MetricCard 
+          <MetricCard
             label="APY"
             value={`${protocol.apy}%`}
             description="Annual yield"
             highlight
           />
-          <MetricCard 
-            label="Fee"
-            value={`${protocol.fee * 100}%`}
-            description="Transaction fee"
+          <MetricCard
+            label="TVL"
+            value={`$${protocol.tvlUsd.toLocaleString(undefined, {
+              maximumFractionDigits: 0,
+            })}`}
+            description="Total value locked"
           />
-          <MetricCard 
-            label="Lockup"
-            value={protocol.lockup === 0 ? "None" : `${protocol.lockup} days`}
-            description="Withdrawal period"
-          />
-          <MetricCard 
+          <MetricCard
             label="Risk"
-            value={riskInfo.label}
+            value={
+              protocol.risk.charAt(0).toUpperCase() + protocol.risk.slice(1)
+            }
             description="Risk assessment"
             customBadge={
-              <div className={`h-2 w-16 rounded-full bg-gray-200 overflow-hidden`}>
-                <div className={`h-full ${riskInfo.color}`} style={{ width: `${protocol.risk * 20}%` }}></div>
+              <div
+                className={`h-2 w-16 rounded-full bg-gray-200 overflow-hidden`}
+              >
+                <div
+                  className={`h-full ${riskColor}`}
+                  style={{
+                    width:
+                      protocol.risk === "low"
+                        ? "33%"
+                        : protocol.risk === "mid"
+                        ? "66%"
+                        : "100%",
+                  }}
+                ></div>
               </div>
             }
+          />
+          <MetricCard
+            label="Score"
+            value={protocol.score?.toFixed(1) ?? "-"}
+            description="Protocol score"
           />
         </div>
         <div className="flex justify-between items-center pt-2 border-t border-gray-100">
           <div className="text-sm text-gray-500">
-            Protocol Score: <span className="font-medium text-polkadot-dark">{protocol.score?.toFixed(1)}</span>
+            Project:{" "}
+            <span className="font-medium text-polkadot-dark">
+              {protocol.project}
+            </span>
           </div>
-          <Button 
+          <Button
             variant="link"
             className="text-polkadot-primary p-0"
             onClick={() => window.open("https://polkadot.network/", "_blank")}
@@ -182,12 +233,26 @@ interface MetricCardProps {
   customBadge?: React.ReactNode;
 }
 
-function MetricCard({ label, value, description, highlight, customBadge }: MetricCardProps) {
+function MetricCard({
+  label,
+  value,
+  description,
+  highlight,
+  customBadge,
+}: MetricCardProps) {
   return (
-    <div className={`p-3 rounded-lg ${highlight ? 'bg-polkadot-light' : 'bg-gray-50'}`}>
+    <div
+      className={`p-3 rounded-lg ${
+        highlight ? "bg-polkadot-light" : "bg-gray-50"
+      }`}
+    >
       <p className="text-sm text-gray-500 mb-1">{label}</p>
       <div className="flex justify-between items-center">
-        <div className={`font-bold text-xl ${highlight ? 'text-polkadot-primary' : 'text-gray-800'}`}>
+        <div
+          className={`font-bold text-xl ${
+            highlight ? "text-polkadot-primary" : "text-gray-800"
+          }`}
+        >
           {value}
         </div>
         {customBadge}

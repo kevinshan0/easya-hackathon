@@ -1,6 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:4000'; // Use port 4000 for backend
+const API_BASE_URL =
+  typeof process !== "undefined" && process.env && process.env.REACT_APP_API_URL
+    ? process.env.REACT_APP_API_URL
+    : "http://localhost:4000";
 
 export function useProtocols() {
   return useQuery({
@@ -11,4 +14,4 @@ export function useProtocols() {
       return res.json();
     },
   });
-} 
+}

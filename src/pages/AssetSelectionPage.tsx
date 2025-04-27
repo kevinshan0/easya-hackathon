@@ -1,39 +1,52 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useWallet } from "@/context/WalletContext";
-import { useYield, AssetType } from "@/context/YieldContext";
+import { useYield } from "@/context/YieldContext";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ArrowRight } from "lucide-react";
 
-const assetData = [
-  {
-    id: "DOT" as AssetType,
+// Fallback asset metadata for known assets
+const assetMeta: Record<
+  string,
+  { name: string; symbol: string; image: string; description: string }
+> = {
+  Polkadot: {
     name: "Polkadot",
     symbol: "DOT",
     image: "https://cryptologos.cc/logos/polkadot-new-dot-logo.png",
     description: "The native token of the Polkadot network",
   },
-  {
-    id: "USDC" as AssetType,
-    name: "USD Coin",
-    symbol: "USDC",
-    image: "https://cryptologos.cc/logos/usd-coin-usdc-logo.png",
-    description: "A fully collateralized US dollar stablecoin",
+  Moonbeam: {
+    name: "Moonbeam",
+    symbol: "GLMR",
+    image: "https://cryptologos.cc/logos/moonbeam-glmr-logo.png",
+    description: "Moonbeam is a smart contract platform on Polkadot.",
   },
-  {
-    id: "KSM" as AssetType,
-    name: "Kusama",
-    symbol: "KSM",
-    image: "https://cryptologos.cc/logos/kusama-ksm-logo.png",
-    description: "Polkadot's canary network token",
+  Acala: {
+    name: "Acala",
+    symbol: "ACA",
+    image: "https://cryptologos.cc/logos/acala-aca-logo.png",
+    description: "Acala is a DeFi platform and liquidity hub of Polkadot.",
   },
-];
+};
 
 export default function AssetSelectionPage() {
   const navigate = useNavigate();
   const { walletConnected } = useWallet();
-  const { selectedAssets, toggleAssetSelection, calculateBestProtocols } = useYield();
+  const {
+    selectedAssets,
+    toggleAssetSelection,
+    calculateBestProtocols,
+    assetList,
+    isLoading,
+  } = useYield();
 
   React.useEffect(() => {
     if (!walletConnected) {
@@ -47,29 +60,49 @@ export default function AssetSelectionPage() {
     navigate("/results");
   };
 
+  if (isLoading) {
+    return <div className="text-center py-12">Loading assets...</div>;
+  }
+
   return (
     <div className="max-w-3xl mx-auto">
       <div className="flex items-center mb-8">
-        <h1 className="text-2xl font-bold text-polkadot-dark">Select Assets to Optimize</h1>
+        <h1 className="text-2xl font-bold text-polkadot-dark">
+          Select Assets to Optimize
+        </h1>
       </div>
 
       <Card className="mb-8 shadow-md border-none">
         <CardHeader className="pb-3">
           <CardTitle>Choose Your Assets</CardTitle>
           <CardDescription>
-            Select which assets you want to find the best yield opportunities for
+            Select which assets you want to find the best yield opportunities
+            for
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {assetData.map((asset) => (
-              <AssetCard
-                key={asset.id}
-                asset={asset}
-                isSelected={selectedAssets.includes(asset.id)}
-                onToggle={() => toggleAssetSelection(asset.id)}
-              />
-            ))}
+            {assetList.map((asset) => {
+              const meta = assetMeta[asset] || {
+                name: asset,
+                symbol: asset,
+                image:
+                  "https://via.placeholder.com/40?text=" +
+                  encodeURIComponent(asset[0]),
+                description: "No description available.",
+              };
+              return (
+                <AssetCard
+                  key={asset}
+                  asset={{
+                    id: asset,
+                    ...meta,
+                  }}
+                  isSelected={selectedAssets.includes(asset)}
+                  onToggle={() => toggleAssetSelection(asset)}
+                />
+              );
+            })}
           </div>
         </CardContent>
       </Card>
@@ -91,7 +124,7 @@ export default function AssetSelectionPage() {
 
 interface AssetCardProps {
   asset: {
-    id: AssetType;
+    id: string;
     name: string;
     symbol: string;
     image: string;
@@ -105,17 +138,19 @@ function AssetCard({ asset, isSelected, onToggle }: AssetCardProps) {
   return (
     <div
       className={`border rounded-xl p-4 cursor-pointer transition-all ${
-        isSelected 
-          ? "bg-polkadot-light border-polkadot-primary shadow-md" 
+        isSelected
+          ? "bg-polkadot-light border-polkadot-primary shadow-md"
           : "bg-white border-gray-100 hover:border-polkadot-primary/50"
       }`}
       onClick={onToggle}
     >
       <div className="flex items-center space-x-3 mb-2">
         <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-          <div className="w-6 h-6 flex items-center justify-center">
-            {asset.symbol}
-          </div>
+          <img
+            src={asset.image}
+            alt={asset.symbol}
+            className="w-6 h-6 object-contain"
+          />
         </div>
         <div>
           <h3 className="font-medium">{asset.name}</h3>
@@ -123,9 +158,11 @@ function AssetCard({ asset, isSelected, onToggle }: AssetCardProps) {
         </div>
       </div>
       <p className="text-sm text-gray-600 mb-3">{asset.description}</p>
-      <div className={`h-1 w-full rounded-full ${
-        isSelected ? "bg-polkadot-primary" : "bg-gray-200"
-      }`}></div>
+      <div
+        className={`h-1 w-full rounded-full ${
+          isSelected ? "bg-polkadot-primary" : "bg-gray-200"
+        }`}
+      ></div>
     </div>
   );
 }
