@@ -66,11 +66,6 @@ export default function AssetSelectionPage() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="flex items-center mb-8">
-        <h1 className="text-2xl font-bold text-polkadot-dark">
-          Select Assets to Optimize
-        </h1>
-      </div>
 
       <Card className="mb-8 shadow-md border-none">
         <CardHeader className="pb-3">

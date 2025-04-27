@@ -20,8 +20,8 @@ export function Header() {
           <Link to="/" className="flex items-center gap-3 group">
             <div className="h-10 flex items-center">
               <img
-                src="\lovable-uploads\polkadot.png"
-                alt="Polkadot Logo"
+                src="/lovable-uploads/logo.png"
+                alt="Logo"
                 className="h-10 w-auto group-hover:opacity-80 transition-opacity"
               />
             </div>
