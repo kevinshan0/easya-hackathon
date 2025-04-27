@@ -2,9 +2,8 @@
 
 ## 🚀 Demo Video
 
-[![Watch the demo](screenshots/demo-video-thumbnail.png)](YOUR_DEMO_VIDEO_LINK_HERE)
 
-> _Click the image above or [this link](YOUR_DEMO_VIDEO_LINK_HERE) to watch the demo video._
+> _Click the [this link](https://youtu.be/XjpFgmt4qbY) to watch the demo video._
 
 ---
 
@@ -12,7 +11,7 @@
 
 | Asset Selection                                | Results Page                       | AI Strategy Page                          |
 | ---------------------------------------------- | ---------------------------------- | ----------------------------------------- |
-| [Asset Selection](https://imgur.com/a/JhyxU1B) | [Results](screenshots/results.png) | [AI Results](https://imgur.com/a/onuM26I) |
+| [Asset Selection](https://imgur.com/a/JhyxU1B) | [Results](https://imgur.com/a/uEF0Hp5) | [AI Results](https://imgur.com/a/onuM26I) |
 
 ---
 
