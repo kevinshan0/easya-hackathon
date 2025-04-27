@@ -65,8 +65,6 @@ export default function ResultsPage() {
   const { walletConnected } = useWallet();
   const { selectedAssets, bestProtocols, aiSuggestion } = useYield();
   const { entries: onChainProtocols, loading } = useYieldEntries();
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   const [aiModalOpen, setAiModalOpen] = React.useState(false);
   const [aiLoading, setAiLoading] = React.useState(false);
   const [aiError, setAiError] = React.useState<string | null>(null);
@@ -99,10 +97,6 @@ export default function ResultsPage() {
     fetchAI();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [aiModalOpen]);
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
   React.useEffect(() => {
     if (!walletConnected) {
@@ -123,21 +117,12 @@ export default function ResultsPage() {
   const sortedProtocols = [...filteredProtocols].sort(
     (a, b) => (b.apy || 0) - (a.apy || 0)
   );
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> Stashed changes
 
   // Gather all bestProtocols into an array and sort by apy descending
   // const protocolResults = selectedAssets
   //   .map((asset) => ({ asset, protocol: bestProtocols[asset] }))
   //   .filter((item) => item.protocol)
   //   .sort((a, b) => (b.protocol!.apy || 0) - (a.protocol!.apy || 0));
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
   return (
     <div className="max-w-4xl mx-auto">
